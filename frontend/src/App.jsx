@@ -6,6 +6,9 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import DashboardLayout from "./layouts/DashboardLayout";
 import Landing from "./pages/Landing";
 import Resume from "./pages/Resume";
+import InterviewSetup from "./pages/InterviewSetup";
+import MockInterview from "./pages/MockInterview";
+import InterviewResult from "./pages/InterviewResult";
 
 function App() {
   return (
@@ -23,8 +26,10 @@ function App() {
           }
         >
           <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/resume" element={<Resume />} />
-
+          <Route path="/resume" element={<Resume />} />
+          <Route path="/interview/setup" element={<InterviewSetup />} />
+          <Route path="/interview/:id" element={<MockInterview />} />
+          <Route path="/interview/:id/result" element={<InterviewResult />} />
         </Route>
       </Routes>
     </BrowserRouter>

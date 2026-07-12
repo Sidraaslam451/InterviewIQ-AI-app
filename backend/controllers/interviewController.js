@@ -36,3 +36,27 @@ export const getInterviewById = async (req, res) => {
   }
   res.json(interview);
 };
+
+export const submitInterview = async (req, res) => {
+  try {
+    const { answers } = req.body; // [{ questionIndex, userAnswer }]
+
+    const interview = await Interview.findOne({ _id: req.params.id, user: req.user._id });
+    if (!interview) {
+      return res.status(404).json({ message: "Interview not found" });
+    }
+
+    answers.forEach(({ questionIndex, userAnswer }) => {
+      if (interview.questions[questionIndex]) {
+        interview.questions[questionIndex].userAnswer = userAnswer;
+      }
+    });
+
+    interview.status = "completed";
+    await interview.save();
+
+    res.json({ message: "Interview submitted", interview });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to submit interview", error: err.message });
+  }
+};
