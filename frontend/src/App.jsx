@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import DashboardLayout from "./layouts/DashboardLayout";
 import Landing from "./pages/Landing";
+import Resume from "./pages/Resume";
 
 function App() {
   return (
@@ -22,6 +23,8 @@ function App() {
           }
         >
           <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/resume" element={<Resume />} />
+
         </Route>
       </Routes>
     </BrowserRouter>
