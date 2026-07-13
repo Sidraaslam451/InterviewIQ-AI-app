@@ -4,6 +4,7 @@ import {
   getMyInterviews,
   getInterviewById,
   submitInterview,
+  getAnalytics,
 } from "../controllers/interviewController.js";
 import { protect } from "../middleware/authMiddleware.js";
 
@@ -15,5 +16,6 @@ router.post("/generate", generateInterview);
 router.get("/", getMyInterviews);
 router.get("/:id", getInterviewById);
 router.post("/:id/submit", submitInterview);
+router.get("/analytics/summary", getAnalytics);
 
 export default router;

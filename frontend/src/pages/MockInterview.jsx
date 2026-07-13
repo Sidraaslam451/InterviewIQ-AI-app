@@ -12,43 +12,86 @@ export default function MockInterview() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState({});
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchInterview = async () => {
-      const res = await api.get(`/interview/${id}`);
-      setInterview(res.data);
+      try {
+        const res = await api.get(`/interview/${id}`);
+        setInterview(res.data);
+      } catch (err) {
+        console.error("Failed to fetch interview", err);
+      } finally {
+        setLoading(false);
+      }
     };
+
     fetchInterview();
   }, [id]);
 
-  if (!interview) return <p className="text-text-secondary">Loading interview...</p>;
+  if (loading) {
+    return (
+      <p className="text-text-secondary">
+        Loading interview...
+      </p>
+    );
+  }
+
+  if (!interview || !interview.questions?.length) {
+    return (
+      <p className="text-red-500">
+        Interview not found.
+      </p>
+    );
+  }
 
   const currentQuestion = interview.questions[currentIndex];
-  const isLastQuestion = currentIndex === interview.questions.length - 1;
+  const isLastQuestion =
+    currentIndex === interview.questions.length - 1;
 
   const handleAnswerChange = (text) => {
-    setAnswers({ ...answers, [currentIndex]: text });
+    setAnswers((prev) => ({
+      ...prev,
+      [currentIndex]: text,
+    }));
   };
 
   const handleNext = () => {
-    if (!isLastQuestion) setCurrentIndex(currentIndex + 1);
+    if (!isLastQuestion) {
+      setCurrentIndex((prev) => prev + 1);
+    }
   };
 
   const handlePrevious = () => {
-    if (currentIndex > 0) setCurrentIndex(currentIndex - 1);
+    if (currentIndex > 0) {
+      setCurrentIndex((prev) => prev - 1);
+    }
   };
 
   const handleFinish = async () => {
     setSubmitting(true);
-    const answersPayload = Object.entries(answers).map(([questionIndex, userAnswer]) => ({
-      questionIndex: Number(questionIndex),
-      userAnswer,
-    }));
+    setSubmitError("");
+
+    const answersPayload = Object.entries(answers).map(
+      ([questionIndex, userAnswer]) => ({
+        questionIndex: Number(questionIndex),
+        userAnswer,
+      })
+    );
 
     try {
-      await api.post(`/interview/${id}/submit`, { answers: answersPayload });
+      await api.post(`/interview/${id}/submit`, {
+        answers: answersPayload,
+      });
+
       navigate(`/interview/${id}/result`);
-    } catch {
+    } catch (err) {
+      console.error("Submit interview error:", err);
+      setSubmitError(
+        err.response?.data?.message ||
+          "Submission failed, please try again."
+      );
       setSubmitting(false);
     }
   };
@@ -56,7 +99,8 @@ export default function MockInterview() {
   return (
     <div>
       <p className="text-text-secondary text-sm mb-2">
-        Question {currentIndex + 1} of {interview.questions.length}
+        Question {currentIndex + 1} of{" "}
+        {interview.questions.length}
       </p>
 
       <Card className="max-w-xl">
@@ -72,17 +116,32 @@ export default function MockInterview() {
           className="w-full border border-border rounded px-3 py-2 mb-4 text-text-primary"
         />
 
+        {submitError && (
+          <p className="text-red-500 text-sm mb-4">
+            {submitError}
+          </p>
+        )}
+
         <div className="flex justify-between">
-          <Button variant="secondary" onClick={handlePrevious} disabled={currentIndex === 0}>
+          <Button
+            variant="secondary"
+            onClick={handlePrevious}
+            disabled={currentIndex === 0}
+          >
             Previous
           </Button>
 
           {isLastQuestion ? (
-            <Button onClick={handleFinish} disabled={submitting}>
+            <Button
+              onClick={handleFinish}
+              disabled={submitting}
+            >
               {submitting ? "Submitting..." : "Finish"}
             </Button>
           ) : (
-            <Button onClick={handleNext}>Next</Button>
+            <Button onClick={handleNext}>
+              Next
+            </Button>
           )}
         </div>
       </Card>

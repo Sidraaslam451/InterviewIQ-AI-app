@@ -17,23 +17,50 @@ export default function InterviewResult() {
 
   if (!interview) return <p className="text-text-secondary">Loading result...</p>;
 
+  const getScoreColor = (score) => {
+    if (score >= 7) return "text-success";
+    if (score >= 4) return "text-warning";
+    return "text-danger";
+  };
+
   return (
     <div>
       <h1 className="text-text-primary text-2xl font-semibold mb-2">
         Interview Complete
       </h1>
-      <p className="text-text-secondary mb-6">
+      <p className="text-text-secondary mb-4">
         {interview.role} &middot; {interview.difficulty}
       </p>
 
+      {interview.overallScore !== null && (
+        <Card className="mb-6 max-w-xs">
+          <p className="text-text-secondary text-sm mb-1">Overall Score</p>
+          <p className={`text-4xl font-semibold ${getScoreColor(interview.overallScore)}`}>
+            {interview.overallScore} / 10
+          </p>
+        </Card>
+      )}
+
       {interview.questions.map((q, index) => (
         <Card key={index} className="mb-4">
-          <p className="text-text-primary font-medium mb-2">
-            {index + 1}. {q.question}
+          <div className="flex justify-between items-start mb-2">
+            <p className="text-text-primary font-medium">
+              {index + 1}. {q.question}
+            </p>
+            {q.score !== null && (
+              <span className={`font-semibold ${getScoreColor(q.score)}`}>
+                {q.score}/10
+              </span>
+            )}
+          </div>
+          <p className="text-text-secondary text-sm mb-2">
+            <strong>Your answer:</strong> {q.userAnswer || "No answer given"}
           </p>
-          <p className="text-text-secondary text-sm">
-            {q.userAnswer || "No answer given"}
-          </p>
+          {q.feedback && (
+            <p className="text-text-secondary text-sm bg-bg border border-border rounded p-3">
+              {q.feedback}
+            </p>
+          )}
         </Card>
       ))}
 
