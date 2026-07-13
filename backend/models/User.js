@@ -20,8 +20,21 @@ const userSchema = new mongoose.Schema(
       required: true,
       minlength: 8,
     },
+  targetRole: {
+      type: String,
+      default: "",
+    },
+    experience: {
+      type: String,
+      default: "",
+    },
+    phone: {
+      type: String,
+      default: "",
+    },
   },
-  { timestamps: true }
+   { timestamps: true }
+  
 );
 
 // Yeh function save hone SE PEHLE automatically chalta hai

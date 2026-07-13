@@ -9,6 +9,7 @@ import Resume from "./pages/Resume";
 import InterviewSetup from "./pages/InterviewSetup";
 import MockInterview from "./pages/MockInterview";
 import InterviewResult from "./pages/InterviewResult";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
           <Route path="/interview/setup" element={<InterviewSetup />} />
           <Route path="/interview/:id" element={<MockInterview />} />
           <Route path="/interview/:id/result" element={<InterviewResult />} />
+          <Route path="/profile" element={<Profile />} />
         </Route>
       </Routes>
     </BrowserRouter>
