@@ -1,3 +1,4 @@
+import axios from "axios";
 import Interview from "../models/Interview.js";
 import {
   generateInterviewQuestions,
@@ -105,8 +106,23 @@ export const submitInterview = async (req, res) => {
               evaluatedQuestions.length,
           )
         : null;
-    interview.status = "completed";
+        interview.status = "completed";
     await interview.save();
+
+    // n8n ko notify karte hain, taake woh email bhej sake
+    // Agar yeh fail ho, interview submission fail nahi honi chahiye — isliye alag try/catch
+    try {
+      await axios.post(process.env.N8N_WEBHOOK_URL, {
+        fullName: req.user.fullName,
+        email: req.user.email,
+        role: interview.role,
+        difficulty: interview.difficulty,
+        score: interview.overallScore,
+      });
+    } catch (webhookErr) {
+      console.error("n8n webhook failed:", webhookErr.message);
+      // Yahan koi error response nahi bhejte — email fail hona interview submission ko fail nahi karna chahiye
+    }
 
     res.json({ message: "Interview submitted and evaluated", interview });
   } catch (err) {

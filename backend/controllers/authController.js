@@ -16,8 +16,13 @@ export const register = async (req, res) => {
 
     const user = await User.create({ fullName, email, password });
 
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
+
     res.status(201).json({
       message: "User registered successfully",
+      token,
       user: {
         id: user._id,
         fullName: user.fullName,
