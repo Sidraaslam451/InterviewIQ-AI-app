@@ -12,7 +12,8 @@ export default function Login() {
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -46,7 +47,9 @@ export default function Login() {
         <h1 className="font-display text-2xl font-semibold text-text-primary mb-1">
           Welcome back
         </h1>
-        <p className="text-text-secondary text-sm mb-6">Sign in to continue to InterviewIQ</p>
+        <p className="text-text-secondary text-sm mb-6">
+          Sign in to continue to InterviewIQ
+        </p>
 
         {error && (
           <motion.p
@@ -60,11 +63,15 @@ export default function Login() {
 
         <form onSubmit={handleSubmit}>
           <div className="relative mb-4">
-            <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
+            <Mail
+              size={16}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted"
+            />
             <input
               type="email"
               name="email"
               placeholder="Email"
+              autoComplete="new-password"
               required
               value={form.email}
               onChange={handleChange}
@@ -73,11 +80,15 @@ export default function Login() {
           </div>
 
           <div className="relative mb-6">
-            <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
+            <Lock
+              size={16}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted"
+            />
             <input
               type="password"
               name="password"
               placeholder="Password"
+              autoComplete="new-password"
               required
               value={form.password}
               onChange={handleChange}
@@ -92,7 +103,10 @@ export default function Login() {
 
         <p className="text-text-secondary text-sm mt-6 text-center">
           New here?{" "}
-          <Link to="/register" className="text-primary font-medium hover:underline">
+          <Link
+            to="/register"
+            className="text-primary font-medium hover:underline"
+          >
             Create an account
           </Link>
         </p>

@@ -12,7 +12,8 @@ export default function Register() {
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -46,7 +47,9 @@ export default function Register() {
         <h1 className="font-display text-2xl font-semibold text-text-primary mb-1">
           Create your account
         </h1>
-        <p className="text-text-secondary text-sm mb-6">Start preparing smarter, in seconds</p>
+        <p className="text-text-secondary text-sm mb-6">
+          Start preparing smarter, in seconds
+        </p>
 
         {error && (
           <motion.p
@@ -60,11 +63,15 @@ export default function Register() {
 
         <form onSubmit={handleSubmit}>
           <div className="relative mb-4">
-            <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
+            <User
+              size={16}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted"
+            />
             <input
               type="text"
               name="fullName"
               placeholder="Full name"
+              autoComplete="new-password"
               required
               value={form.fullName}
               onChange={handleChange}
@@ -73,11 +80,15 @@ export default function Register() {
           </div>
 
           <div className="relative mb-4">
-            <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
+            <Mail
+              size={16}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted"
+            />
             <input
               type="email"
               name="email"
               placeholder="Email"
+              autoComplete="new-password"
               required
               value={form.email}
               onChange={handleChange}
@@ -86,11 +97,15 @@ export default function Register() {
           </div>
 
           <div className="relative mb-6">
-            <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
+            <Lock
+              size={16}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted"
+            />
             <input
               type="password"
               name="password"
               placeholder="Password (min. 8 characters)"
+              autoComplete="new-password"
               required
               minLength={8}
               value={form.password}
@@ -106,7 +121,10 @@ export default function Register() {
 
         <p className="text-text-secondary text-sm mt-6 text-center">
           Already have an account?{" "}
-          <Link to="/login" className="text-primary font-medium hover:underline">
+          <Link
+            to="/login"
+            className="text-primary font-medium hover:underline"
+          >
             Sign in
           </Link>
         </p>
