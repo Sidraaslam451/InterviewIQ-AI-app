@@ -1,84 +1,116 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Sparkles, Mail, Lock, User } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import Card from "../components/Card";
 import Button from "../components/Button";
 
 export default function Register() {
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-
   const { register } = useAuth();
   const navigate = useNavigate();
+  const [form, setForm] = useState({ fullName: "", email: "", password: "" });
+  const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    setLoading(true);
-
+    setSubmitting(true);
     try {
-      await register(fullName, email, password);
+      await register(form.fullName, form.email, form.password);
       navigate("/dashboard");
     } catch (err) {
-      setError(err.response?.data?.message || "Something went wrong");
+      setError(err.response?.data?.message || "Unable to create account");
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-bg">
-      <Card className="w-full max-w-sm">
+    <div className="min-h-screen flex items-center justify-center bg-bg px-4 relative overflow-hidden">
+      <div className="absolute top-20 left-20 w-64 h-64 bg-primary/10 rounded-full blur-3xl -z-10" />
+      <div className="absolute bottom-20 right-20 w-72 h-72 bg-primary-dark/10 rounded-full blur-3xl -z-10" />
+
+      <motion.div
+        initial={{ opacity: 0, y: 20, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.4 }}
+        className="glass-card rounded-2xl shadow-xl shadow-primary/10 p-8 w-full max-w-sm"
+      >
+        <div className="w-11 h-11 rounded-xl bg-linear-to-br from-primary to-primary-dark flex items-center justify-center mb-5 shadow-md shadow-primary/30">
+          <Sparkles size={20} className="text-white" />
+        </div>
+
+        <h1 className="font-display text-2xl font-semibold text-text-primary mb-1">
+          Create your account
+        </h1>
+        <p className="text-text-secondary text-sm mb-6">Start preparing smarter, in seconds</p>
+
+        {error && (
+          <motion.p
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            className="text-danger text-sm mb-4 bg-danger/10 px-3 py-2 rounded-lg"
+          >
+            {error}
+          </motion.p>
+        )}
+
         <form onSubmit={handleSubmit}>
-          <h1 className="text-text-primary text-2xl font-semibold mb-6">
-            Create your account
-          </h1>
+          <div className="relative mb-4">
+            <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
+            <input
+              type="text"
+              name="fullName"
+              placeholder="Full name"
+              required
+              value={form.fullName}
+              onChange={handleChange}
+              className="w-full border border-border rounded-lg pl-10 pr-3 py-2.5 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
+            />
+          </div>
 
-          {error && <p className="text-danger text-sm mb-4">{error}</p>}
+          <div className="relative mb-4">
+            <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              required
+              value={form.email}
+              onChange={handleChange}
+              className="w-full border border-border rounded-lg pl-10 pr-3 py-2.5 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
+            />
+          </div>
 
-          <label className="block text-text-secondary text-sm mb-1">Full name</label>
-          <input
-            type="text"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            required
-            className="w-full border border-border rounded px-3 py-2 mb-4 text-text-primary"
-          />
+          <div className="relative mb-6">
+            <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
+            <input
+              type="password"
+              name="password"
+              placeholder="Password (min. 8 characters)"
+              required
+              minLength={8}
+              value={form.password}
+              onChange={handleChange}
+              className="w-full border border-border rounded-lg pl-10 pr-3 py-2.5 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
+            />
+          </div>
 
-          <label className="block text-text-secondary text-sm mb-1">Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="w-full border border-border rounded px-3 py-2 mb-4 text-text-primary"
-          />
-
-          <label className="block text-text-secondary text-sm mb-1">Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            minLength={8}
-            className="w-full border border-border rounded px-3 py-2 mb-6 text-text-primary"
-          />
-
-          <Button type="submit" fullWidth disabled={loading}>
-            {loading ? "Creating account..." : "Register"}
+          <Button type="submit" fullWidth loading={submitting}>
+            {submitting ? "Creating account..." : "Create account"}
           </Button>
-
-          <p className="text-text-secondary text-sm mt-4 text-center">
-            Already have an account?{" "}
-            <Link to="/login" className="text-primary">
-              Log in
-            </Link>
-          </p>
         </form>
-      </Card>
+
+        <p className="text-text-secondary text-sm mt-6 text-center">
+          Already have an account?{" "}
+          <Link to="/login" className="text-primary font-medium hover:underline">
+            Sign in
+          </Link>
+        </p>
+      </motion.div>
     </div>
   );
 }

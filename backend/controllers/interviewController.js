@@ -172,3 +172,31 @@ export const getAnalytics = async (req, res) => {
     res.status(500).json({ message: "Failed to load analytics", error: err.message });
   }
 };
+// Public endpoint — koi login zaroori nahi. Sirf aggregate counts, kisi user ka private data nahi.
+export const getPublicStats = async (req, res) => {
+  try {
+    const totalInterviews = await Interview.countDocuments({ status: "completed" });
+
+    const totalQuestionsAgg = await Interview.aggregate([
+      { $match: { status: "completed" } },
+      { $project: { questionCount: { $size: "$questions" } } },
+      { $group: { _id: null, total: { $sum: "$questionCount" } } },
+    ]);
+    const totalQuestions = totalQuestionsAgg[0]?.total || 0;
+
+    const avgScoreAgg = await Interview.aggregate([
+      { $match: { status: "completed", overallScore: { $ne: null } } },
+      { $group: { _id: null, avg: { $avg: "$overallScore" } } },
+    ]);
+    const averageScore = avgScoreAgg[0]?.avg ? Math.round(avgScoreAgg[0].avg * 10) / 10 : null;
+
+    res.json({
+      totalInterviews,
+      totalQuestions,
+      averageScore,
+    });
+  } catch (err) {
+    console.error("Public stats error:", err);
+    res.status(500).json({ message: "Failed to load stats" });
+  }
+};
