@@ -23,6 +23,9 @@ app.use("/api/resume", resumeRoutes);
 app.use("/api/interview", interviewRoutes);
 app.use("/api/user", userRoutes);
 
+app.get("/", (req, res) => {
+  res.json({ message: "InterviewIQ AI backend is running. Try /api/health" });
+});
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", message: "Server is running" });
 });
